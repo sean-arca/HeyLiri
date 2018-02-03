@@ -61,9 +61,25 @@ function myTweets() {
     });
 }
 
+// Spotify
+function spotifyThisSong () {
+    spotify.search({ type: 'track', query: searchInput }, function(err, data) {
+        if (err) {
+            console.log("Error: " + err);
+        } else {
+            console.log("Song Search Complete.");
+        };
 
-// * `spotify-this-song`
+        // Display Arist - Song
+        console.log(`${data.tracks.items[0].artists[0].name} - ${data.tracks.items[0].name}`);
+        // Display Album Name
+        console.log(`Album: ${data.tracks.items[0].album.name}`);
+        // Display Preview Link
+        console.log(`Preview: ${data.tracks.items[0].preview_url}`);
+        
+    });
+}
 
-// * `movie-this`
+// OMDB
 
-// * `do-what-it-says`
+// Do What It Says
