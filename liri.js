@@ -4,6 +4,7 @@ var keys = require('./keys.js');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require('fs');
 
 // APIs
 var spotify = new Spotify(keys.spotify);
@@ -81,5 +82,77 @@ function spotifyThisSong () {
 }
 
 // OMDB
+function movieThis() {
+    var movie = searchInput;
+    if (!movie) {
+        movie = "mr nobody"
+    };
+
+    request(`http://www.omdbapi.com/?t=${movie}&plot=short&apikey=trilogy`, function (error, response, body) {
+        // If no errors, parse through movie object
+        if (!error && response.statusCode == 200) {
+            // Create movieObject var for typing efficiency
+            var movieObject = JSON.parse(body);
+            // View the object (testing)
+            // console.log(movieObject);
+            
+            // Title
+            console.log(`Title: ${movieObject.Title}`);
+            // Year
+            console.log(`Year: ${movieObject.Year}`);
+            // IMDB Rating
+            console.log(`IMDB Rating: ${movieObject.imdbRating}`);
+            // Rotten Tomatoes
+            console.log(`Rotten Tomatoes Rating: ${movieObject.Ratings[1].Value}`);
+            // Country Produced
+            console.log(`Produced In: ${movieObject.Country}`);
+            // Language
+            console.log(`Language: ${movieObject.Language}`);
+            // Plot
+            console.log(`Plot: ${movieObject.Plot}`);
+            // Actors/Actresses
+            console.log(`Actors/Actresses: ${movieObject.Actors}`);
+
+        } else {
+            console.log("Error :"+ error);
+            return;
+        };
+    });
+};
 
 // Do What It Says
+function doWhatItSays () {
+    // Read thru random.txt using fs
+    fs.readFile("random.txt", 'utf8' ,function(error, data) {
+        if (error) {
+            return console.log(error);
+        }
+        var logTxt = data.split(',');
+        // console.log(logTxt); view data
+
+        var command = logTxt[0];
+        var param = logTxt[1];
+
+        // Clean up param
+        param = param.replace('"', '');
+        param = param.replace('"', '');
+
+        // Switch cases based on random.txt
+        switch (command) {
+            case 'my-tweets':
+                searchInput = param;
+                myTweets();
+                break;
+
+            case 'spotify-this-song':
+                searchInput = param;
+                spotifyThisSong();
+                break;
+
+            case 'movie-this':
+                searchInput = param;
+                movieThis();
+                break;
+        }
+    });
+}
